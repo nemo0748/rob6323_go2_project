@@ -496,10 +496,11 @@ class Rob6323Go2Env(DirectRLEnv):
         foot_forces = torch.norm(
             self._contact_sensor.data.net_forces_w[:, self._feet_ids_sensor, :], dim=-1
         )
+        
         desired_contact = self.desired_contact_states
         #   rew_tracking_contacts_shaped_force = torch.zeros_like(self.num_envs, dtype=torch.float)
-        rew_tracking_contacts_shaped_force = torch.zeros(self.num_envs, dtype=torch.float, device=self.device)
-        #   rew_tracking_contacts_shaped_force = 0. not working. 133412
+        #  rew_tracking_contacts_shaped_force = torch.zeros(self.num_envs, dtype=torch.float, device=self.device)
+        rew_tracking_contacts_shaped_force = 0. #  not working. 133412
         # 2. Loop through the 4 feet to apply the reward logic individually
         for i in range(4):
             # Penalty term (1 - desired_contact) is active only during Swing

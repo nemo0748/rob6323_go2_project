@@ -121,5 +121,5 @@ class Rob6323Go2EnvCfg(DirectRLEnvCfg):
     # Joint acceleration
     # joint_acc_reward_scale = 0  # -0.00005  # Penalty for high joint acceleration FAILED just keeps hopping
 
-    foot2contact_reward_scale = 0.09  # 0.11  # 1.0  # Penalty for deviating from 2 contacts FAILED w/o 0 .7 .09 .11
+    foot2contact_reward_scale = 0  # 0.09  # 0.11  # 1.0  # Penalty for deviating from 2 contacts FAILED w/o 0 .7 .09 .11
     
