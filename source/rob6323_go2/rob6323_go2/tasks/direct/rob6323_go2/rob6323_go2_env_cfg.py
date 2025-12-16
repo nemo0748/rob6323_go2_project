@@ -17,15 +17,27 @@ from isaaclab.sensors import ContactSensorCfg
 from isaaclab.markers import VisualizationMarkersCfg
 from isaaclab.markers.config import BLUE_ARROW_X_MARKER_CFG, FRAME_MARKER_CFG, GREEN_ARROW_X_MARKER_CFG
 
+
+# add this import:
+from isaaclab.actuators import ImplicitActuatorCfg
+
 @configclass
 class Rob6323Go2EnvCfg(DirectRLEnvCfg):
+    # PD control gains - Added: Step 2.1
+    Kp = 20.0  # Proportional gain
+    Kd = 0.5   # Derivative gain
+    torque_limits = 100.0  # Max torque
+
+    # Added: Step 3.1 Update Configuration 
+    base_height_min = 0.20  # Terminate if base is lower than 20cm
+    
     # env
     decimation = 4
     episode_length_s = 20.0
     # - spaces definition
     action_scale = 0.25
     action_space = 12
-    observation_space = 48
+
     state_space = 0
     debug_vis = True
 
@@ -55,8 +67,16 @@ class Rob6323Go2EnvCfg(DirectRLEnvCfg):
         debug_vis=False,
     )
     # robot(s)
-    robot_cfg: ArticulationCfg = UNITREE_GO2_CFG.replace(prim_path="/World/envs/env_.*/Robot")
-
+    robot_cfg: ArticulationCfg = UNITREE_GO2_CFG.replace(prim_path="/World/envs/env_.*/Robot")  # Step 2.1
+    # "base_legs" is an arbitrary key we use to group these actuators
+    robot_cfg.actuators["base_legs"] = ImplicitActuatorCfg(
+        joint_names_expr=[".*_hip_joint", ".*_thigh_joint", ".*_calf_joint"],
+        effort_limit=23.5,
+        velocity_limit=30.0,
+        stiffness=0.0,  # CRITICAL: Set to 0 to disable implicit P-gain
+        damping=0.0,    # CRITICAL: Set to 0 to disable implicit D-gain
+    ) # Disabled implicit PD control Step 2.1
+    
     # scene
     scene: InteractiveSceneCfg = InteractiveSceneCfg(num_envs=4096, env_spacing=4.0, replicate_physics=True)
     contact_sensor: ContactSensorCfg = ContactSensorCfg(
@@ -79,3 +99,27 @@ class Rob6323Go2EnvCfg(DirectRLEnvCfg):
     # reward scales
     lin_vel_reward_scale = 1.0
     yaw_rate_reward_scale = 0.5
+    action_rate_reward_scale = -0.1  # Added: Step 1.1 Update Configuration 
+
+    # Additional reward scales Added: Step 5.1
+    orient_reward_scale = -5.0
+    lin_vel_z_reward_scale = -0.02
+    dof_vel_reward_scale = -0.0001
+    ang_vel_xy_reward_scale = -0.001
+
+    # In Rob6323Go2EnvCfg Part 6.1
+    # Added Update Configuration 4.1 Step
+    observation_space = 48 + 4  # Added 4 for clock inputs
+
+    raibert_heuristic_reward_scale = -10.0
+    feet_clearance_reward_scale = -30.0
+    tracking_contacts_shaped_force_reward_scale = 4.0
+
+    # Torque Regularization Adding
+    torque_reward_scale = -0.0001  # Penalty for high torque magnitude
+
+    # Joint acceleration
+    # joint_acc_reward_scale = 0  # -0.00005  # Penalty for high joint acceleration FAILED just keeps hopping
+
+    foot2contact_reward_scale = 0.09  # 0.11  # 1.0  # Penalty for deviating from 2 contacts FAILED w/o 0 .7 .09 .11
+    
