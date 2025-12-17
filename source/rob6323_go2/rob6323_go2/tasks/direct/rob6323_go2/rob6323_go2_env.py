@@ -107,7 +107,7 @@ class Rob6323Go2Env(DirectRLEnv):
         self.robot = Articulation(self.cfg.robot_cfg)
         self._contact_sensor = ContactSensor(self.cfg.contact_sensor)
         # add contact sensor information - Tip from Slack
-        #self.scene.sensors["contact_sensor"] = self._contact_sensor # Causing jumping
+        self.scene.sensors["contact_sensor"] = self._contact_sensor  # Causing jumping
         # add ground plane
         self.cfg.terrain.num_envs = self.scene.cfg.num_envs
         self.cfg.terrain.env_spacing = self.scene.cfg.env_spacing
@@ -500,7 +500,7 @@ class Rob6323Go2Env(DirectRLEnv):
         desired_contact = self.desired_contact_states
         #   rew_tracking_contacts_shaped_force = torch.zeros_like(self.num_envs, dtype=torch.float)
         #  rew_tracking_contacts_shaped_force = torch.zeros(self.num_envs, dtype=torch.float, device=self.device)
-        rew_tracking_contacts_shaped_force = 0. #  not working. 133412
+        rew_tracking_contacts_shaped_force = 0.  # not working. 133412
         # 2. Loop through the 4 feet to apply the reward logic individually
         for i in range(4):
             # Penalty term (1 - desired_contact) is active only during Swing

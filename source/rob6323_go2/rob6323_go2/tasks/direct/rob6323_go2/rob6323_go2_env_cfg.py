@@ -29,7 +29,7 @@ class Rob6323Go2EnvCfg(DirectRLEnvCfg):
     torque_limits = 100.0  # Max torque
 
     # Added: Step 3.1 Update Configuration 
-    base_height_min = 0.20  # Terminate if base is lower than 20cm
+    base_height_min = 0.05  # 0.05  # 0.20  # Terminate if base is lower than 20cm
     
     # env
     decimation = 4
@@ -121,5 +121,5 @@ class Rob6323Go2EnvCfg(DirectRLEnvCfg):
     # Joint acceleration
     # joint_acc_reward_scale = 0  # -0.00005  # Penalty for high joint acceleration FAILED just keeps hopping
 
-    foot2contact_reward_scale = 0  # 0.09  # 0.11  # 1.0  # Penalty for deviating from 2 contacts FAILED w/o 0 .7 .09 .11
+    foot2contact_reward_scale = 0  # 0.09  # 0.11  # 1.0  # Penalty for deviating from 2 contacts FAILED w/o 0 .7 .09 .11 # DEACTIVATED
     
